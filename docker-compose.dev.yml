@@ -1,0 +1,26 @@
+version: "3"
+services: 
+  nginx:
+    #ponemos puerto 80 por que es el puerto en el que escucha por defecto nginx
+    ports: 
+      - "3000:80"
+  node-app:
+    build: 
+      context: . 
+      #para que funcine el if 
+      args: 
+        NODE_ENV: development
+    volumes: 
+      - ./:/app
+      - /app/node_modules
+    environment: 
+      - NODE_ENV=development
+      - MONGO_USER=nico
+      - MONGO_PASSWORD=1234
+      - SESSION_SECRET=secret
+    command: npm run dev
+  mongo:
+    environment: 
+      - MONGO_INITDB_ROOT_USERNAME=nico
+      - MONGO_INITDB_ROOT_PASSWORD=1234
+    

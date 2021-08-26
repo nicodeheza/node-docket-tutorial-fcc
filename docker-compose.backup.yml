@@ -1,0 +1,36 @@
+#primero expesificamos la version que vamos a usar
+# detalles de versiones: https://docs.docker.com/compose/compose-file/compose-versioning/
+version: "3"
+#vamos a espesificar todos los contenedores que queremos crear, aca los contenedores se los llama services
+services: 
+#el tabulado es importente
+#nombrarlo 
+  node-app:
+  #configuraciones
+  # espesificas el directorio del dokerfile en relacion al compose
+    build: .
+    #damos una lista de los puertos que queremos exponer
+    ports: 
+      - "3000:3000"
+    #pasamos los volumes
+    volumes: 
+      - ./:/app
+      - /app/node_modules
+    #pasmos los env
+    environment: 
+      - PORT=3000
+    #podes pasar tambien el .env file
+    # env_file: 
+    #   -./.env
+
+    #para ejecutar usar el comando "docker-compose up" construlle la imagen y luego inicia el contenedor
+    #podes pasar la flag -d para que se ejecute dajando libre la consola. 
+    #"docker-compose up -d"
+
+    #para destruir el contenedor: "docker-compose down" 
+    #si queres destruir el volume tambien le pasa la flag -v
+    #"docker-compose down -v"
+
+    #crea la imagen solo la primera vez, si haces cambios en el dockerfile tenes que volver a construir la imagen, para eso 
+    # pasas el flag --build. eje:
+    #"docker-compose up -d --build"

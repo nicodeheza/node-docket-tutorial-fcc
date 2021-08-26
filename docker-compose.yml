@@ -1,0 +1,56 @@
+#para tener dos configuracionse distinata para porduccion y desarrolo podemos usar multiples archivos docker-compose 
+#en este va todas las configuraciones que tienen en comun los dos entoronos. 
+version: "3"
+services: 
+  #agregamos nginx
+  nginx:
+    image: nginx:stable-alpine
+    #agregamos la configuracion en un volume
+    #nginx espera encontrar la configuracion en "/etc/nginx/conf.d/default.conf" (ro read only)
+    volumes: 
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+  node-app:
+    build: .
+    #al agregar nginx no hace falta exponer los puertos 
+    # ports: 
+    #   - "3000:3000"
+    environment: 
+      - PORT=3000
+    #para asegurarse que inicie primero el contenedor de la db
+    depends_on: 
+      - mongo
+
+#para correr en cualquiera de los dos modos pasas el comando de la siguiente manera:
+# "docker-compose -f <archivo base> -f <archivo de entorno> up -d"
+#la -f es de file, el orden en que pones los archivos importa por que los sobreescribis. eje:
+#"docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d" 
+
+#para bajarolo el mismo comando con down , recordad que para borrar los volume usar -v
+#en prod si hay cambios hay que recostruir la imagen pasando --build
+
+#no olvidar poner los docker-compose en el dockerignore
+
+# vamos a crear otro contenedor con mongo db , tiene que estar abajo de services
+  mongo:
+    #como vamos a usar la imagen de mongo talcual esta no vamos a hacer un bild, usamos directamnte image
+    image: mongo
+    environment: 
+      - MONGO_INITDB_ROOT_USERNAME=nico
+      - MONGO_INITDB_ROOT_PASSWORD=1234
+    volumes: 
+    #crea el volume con un mobre para poder identificarlo, la ruta es la del contenodro
+      - mongo-db:/data/db
+#agregamos redis
+  redis:
+    image: redis
+#para poder usar el volume con nombre hay que declaralo, por que lo podes compartir con varios contenedores.
+volumes: 
+  mongo-db:
+#cuando hacel el down para no perder el volume de la db no usar el flag -v en su lugar hacer un "docker volume prune" anstes del 
+#down, de esta manera te aseguras que no se pierda la db. 
+
+#"docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build -V" para renovar los volumes anonimos 
+#por si tenes dependencias nuevas asi no tenes que hacer un down 
+
+#"docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d --scale node-app=2" el --scale node-app=2 es para que 
+#inicie dos instancias o dos contenedores de node app

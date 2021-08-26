@@ -1,0 +1,14 @@
+version: "3"
+services:
+  nginx:
+    ports: 
+      - "80:80" 
+  node-app:
+    build: 
+      context: . 
+      #para que funcine el if 
+      args: 
+        NODE_ENV: production  
+    environment:  
+      - NODE_ENV=production
+    command: node index.js
