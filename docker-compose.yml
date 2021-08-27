@@ -11,6 +11,8 @@ services:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
   node-app:
     build: .
+    #que use la imagen de docker hub
+    image: nicodeheza/node-app
     #al agregar nginx no hace falta exponer los puertos 
     # ports: 
     #   - "3000:3000"
