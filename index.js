@@ -54,7 +54,7 @@ app.use(express.json());
 
 app.get('/api/v1',(req, res)=>{
     console.log("yeah it ran");
-    res.send("<h2>Hi There</h2>");
+    res.send("<h2>Hi There!!!!</h2>");
 });
 app.use('/api/v1/post', postRouter);
 app.use('/api/v1/users', userRoutes)
